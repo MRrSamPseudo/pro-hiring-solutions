@@ -2,67 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --font-sans: 'Inter', system-ui, sans-serif;
-}
-
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 5rem;
+  scroll-padding-top: 6rem;
 }
 
 body {
-  @apply bg-navy-950 text-navy-100 antialiased;
-  background-image:
-    radial-gradient(60rem 60rem at 80% -10%, rgba(23, 162, 180, 0.14), transparent 60%),
-    radial-gradient(50rem 50rem at -10% 20%, rgba(33, 60, 125, 0.35), transparent 55%);
-  background-attachment: fixed;
+  @apply bg-white text-muted antialiased;
+  font-feature-settings: 'ss01';
 }
 
-/* Reveal-on-scroll */
-.reveal {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-  will-change: opacity, transform;
-}
-.reveal.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
 @media (prefers-reduced-motion: reduce) {
-  .reveal { opacity: 1; transform: none; transition: none; }
   html { scroll-behavior: auto; }
 }
 
-.gradient-text {
-  @apply bg-clip-text text-transparent;
-  background-image: linear-gradient(100deg, #6fdae6 0%, #2fc0d2 45%, #7f9dd6 100%);
+@layer components {
+  .container-tight {
+    @apply container max-w-[1160px];
+  }
+
+  /* Buttons */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-[15px] font-semibold transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2;
+  }
+  .btn-primary {
+    @apply btn bg-navy-800 text-white shadow-btn hover:bg-navy-700;
+  }
+  .btn-light {
+    @apply btn border border-white/25 bg-white/5 text-white hover:bg-white/10;
+  }
+  .btn-outline {
+    @apply btn border border-line bg-white text-ink hover:border-navy-300 hover:bg-navy-50;
+  }
+
+  /* Cards */
+  .card {
+    @apply rounded-2xl border border-line bg-white shadow-card;
+  }
+
+  /* Icon tile */
+  .tile {
+    @apply grid h-11 w-11 place-items-center rounded-xl bg-navy-50 text-navy-800;
+  }
+  .tile-dark {
+    @apply grid h-11 w-11 place-items-center rounded-xl bg-white/10 text-white;
+  }
+
+  /* Micro label */
+  .label {
+    @apply mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.08em] text-muted;
+  }
+
+  /* Form field */
+  .field {
+    @apply w-full rounded-xl border border-line bg-canvas px-4 py-3 text-[15px] text-ink outline-none transition-colors placeholder:text-navy-300 focus:border-navy-400 focus:bg-white;
+  }
+
+  .section {
+    @apply py-16 sm:py-20;
+  }
 }
 
-.card {
-  @apply rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm;
+/* Subtle dot pattern for the navy hero */
+.dotted {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1px);
+  background-size: 22px 22px;
 }
-
-.btn {
-  @apply inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-sm font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950;
-}
-.btn-primary {
-  @apply btn bg-teal-500 text-white shadow-lg shadow-teal-500/20 hover:bg-teal-400 hover:shadow-teal-400/30 active:scale-[0.98];
-}
-.btn-ghost {
-  @apply btn border border-white/15 bg-white/[0.02] text-navy-50 hover:border-teal-400/50 hover:bg-white/[0.06] active:scale-[0.98];
-}
-
-.section {
-  @apply py-20 sm:py-28;
-}
-.eyebrow {
-  @apply mb-3 inline-block text-xs font-semibold uppercase tracking-[0.2em] text-teal-300;
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track { background: #08122a; }
-::-webkit-scrollbar-thumb { background: #1a2f61; border-radius: 6px; }
-::-webkit-scrollbar-thumb:hover { background: #213c7d; }

@@ -2,6 +2,11 @@ type IconProps = { className?: string };
 const base = 'h-6 w-6';
 
 export const Icon = {
+  home: (p: IconProps) => (
+    <svg className={p.className ?? base} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 10.5 12 3l9 7.5" /><path d="M5.5 9.5V20h13V9.5" /><path d="M10 20v-5h4v5" />
+    </svg>
+  ),
   briefcase: (p: IconProps) => (
     <svg className={p.className ?? base} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <rect x="3" y="7" width="18" height="13" rx="2" />

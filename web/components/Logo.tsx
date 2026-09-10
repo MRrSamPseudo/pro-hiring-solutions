@@ -1,58 +1,70 @@
 import { site } from '@/lib/site';
 
 /**
- * Inline SVG logomark for Pro Hiring Solutions.
- * Vector "PH" monogram with a teal check-swoosh and a person dot —
- * echoes the brand logo and stays crisp at any size / on any background.
- * Drop the real raster logo at /public/logo.png to swap the wordmark image if preferred.
+ * The brand asset at /public/logo.png is a square lockup: the PH monogram
+ * sits above the "Pro Hiring Solutions" wordmark. At header sizes the baked-in
+ * wordmark is unreadable, so we crop to the monogram and set the wordmark in
+ * type beside it. MARK_* describe where the monogram sits inside the artwork.
  */
-export function LogoMark({ className = 'h-9 w-9' }: { className?: string }) {
+const MARK_HEIGHT_RATIO = 0.42; // monogram height as a fraction of the image
+const MARK_CENTER_Y = 0.445; // vertical centre of the monogram
+const MARK_CENTER_X = 0.5;
+
+export function LogoMark({ size = 44, className = '' }: { size?: number; className?: string }) {
+  const img = size / MARK_HEIGHT_RATIO;
   return (
-    <svg viewBox="0 0 64 64" className={className} role="img" aria-label={`${site.name} logo`}>
-      <defs>
-        <linearGradient id="phNavy" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#213c7d" />
-          <stop offset="1" stopColor="#0e1c38" />
-        </linearGradient>
-        <linearGradient id="phTeal" x1="0" y1="1" x2="1" y2="0">
-          <stop offset="0" stopColor="#158298" />
-          <stop offset="1" stopColor="#6fdae6" />
-        </linearGradient>
-      </defs>
-      <rect x="2" y="2" width="60" height="60" rx="14" fill="url(#phNavy)" />
-      {/* P stem + H bar suggestion */}
-      <path
-        d="M16 46V18h10a9 9 0 0 1 0 18h-4"
-        fill="none"
-        stroke="#dbe6fb"
-        strokeWidth="4.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+    <span
+      className={`relative block shrink-0 overflow-hidden ${className}`}
+      style={{ height: size, width: size }}
+      aria-hidden="true"
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/logo.png"
+        alt=""
+        style={{
+          position: 'absolute',
+          height: img,
+          width: img,
+          maxWidth: 'none',
+          top: -(MARK_CENTER_Y * img - size / 2),
+          left: -(MARK_CENTER_X * img - size / 2),
+        }}
       />
-      <path d="M44 18v28" fill="none" stroke="#dbe6fb" strokeWidth="4.5" strokeLinecap="round" />
-      {/* teal check swoosh */}
-      <path
-        d="M20 40c8 3 15-2 20-10s9-14 9-14"
-        fill="none"
-        stroke="url(#phTeal)"
-        strokeWidth="5"
-        strokeLinecap="round"
-      />
-      <circle cx="30" cy="27" r="4.5" fill="url(#phTeal)" />
-    </svg>
+    </span>
   );
 }
 
-export function LogoWordmark({ className = '' }: { className?: string }) {
+/** Horizontal lockup for light surfaces (header). */
+export function Logo({ size = 44 }: { size?: number }) {
   return (
-    <span className={`flex items-center gap-2.5 ${className}`}>
-      <LogoMark className="h-9 w-9" />
+    <span className="flex items-center gap-2.5">
+      <LogoMark size={size} />
       <span className="flex flex-col leading-none">
-        <span className="text-[15px] font-extrabold tracking-tight text-white">Pro Hiring</span>
-        <span className="text-[11px] font-semibold uppercase tracking-[0.25em] text-teal-300">
+        <span className="text-[17px] font-bold tracking-tight text-ink">Pro Hiring</span>
+        <span className="mt-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-teal-500">
           Solutions
         </span>
       </span>
+      <span className="sr-only">{site.name}</span>
+    </span>
+  );
+}
+
+/** Horizontal lockup for the navy footer — the mark sits on a white tile. */
+export function LogoOnDark({ size = 40 }: { size?: number }) {
+  return (
+    <span className="flex items-center gap-3">
+      <span className="grid place-items-center rounded-xl bg-white p-1.5">
+        <LogoMark size={size} />
+      </span>
+      <span className="flex flex-col leading-none">
+        <span className="text-[17px] font-bold tracking-tight text-white">Pro Hiring</span>
+        <span className="mt-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-teal-300">
+          Solutions
+        </span>
+      </span>
+      <span className="sr-only">{site.name}</span>
     </span>
   );
 }

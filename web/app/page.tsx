@@ -1,6 +1,5 @@
 import { Header } from '@/components/Header';
-import { RevealController } from '@/components/Reveal';
-import { Hero, Services, Process, Roles, Why, Testimonials, FAQ, Footer } from '@/components/Sections';
+import { Hero, Responsibilities, FAQ, Footer } from '@/components/Sections';
 import { Apply } from '@/components/Apply';
 import { site } from '@/lib/site';
 
@@ -25,16 +24,11 @@ export default function Home() {
       <Header />
       <main>
         <Hero />
-        <Services />
-        <Process />
-        <Roles />
-        <Why />
-        <Testimonials />
         <Apply />
+        <Responsibilities />
         <FAQ />
       </main>
       <Footer />
-      <RevealController />
     </>
   );
 }

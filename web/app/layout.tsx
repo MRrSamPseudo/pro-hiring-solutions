@@ -1,9 +1,14 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter } from 'next/font/google';
+import { Poppins } from 'next/font/google';
 import './globals.css';
 import { site } from '@/lib/site';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-sans', display: 'swap' });
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-sans',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -14,19 +19,18 @@ export const metadata: Metadata = {
   description: site.description,
   keywords: [
     'recruitment agency',
-    'staffing',
+    'staffing agency',
     'hiring solutions',
-    'executive search',
-    'contract staffing',
     'job placement',
     'careers',
+    'apply for jobs',
   ],
   openGraph: {
     type: 'website',
     url: site.url,
+    siteName: site.name,
     title: `${site.name} — ${site.tagline}`,
     description: site.description,
-    siteName: site.name,
   },
   twitter: {
     card: 'summary_large_image',
@@ -37,14 +41,14 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#08122a',
+  themeColor: '#0d2249',
   width: 'device-width',
   initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={poppins.variable}>
       <body>{children}</body>
     </html>
   );
