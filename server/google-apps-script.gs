@@ -1,31 +1,31 @@
 /**
- * Pro Hiring Solutions — Google Sheets intake webhook.
+ * Pro Hiring Solutions — Google Sheets intake + email notification.
+ *
+ * Bound to the "Pro Hiring Solutions — Applications" spreadsheet and deployed
+ * as a Web App ("Execute as: Me", "Who has access: Anyone"). The Render API is
+ * the only caller and it holds the /exec URL plus the shared secret.
+ *
+ * Each submission appends a row to the Applications tab and emails the lead to
+ * NOTIFY_EMAIL. Sending uses MailApp, so no SMTP credentials are stored anywhere.
  *
  * SETUP
- * 1. Open your Google Sheet (the tab where applications should land).
- * 2. Extensions -> Apps Script. Delete any code, paste this file.
- * 3. Set SECRET below to a random string (optional but recommended),
- *    and set the same value as SHEETS_WEBHOOK_TOKEN on the Render service.
- * 4. Set SHEET_NAME to the exact tab name you want rows written to.
- * 5. Deploy -> New deployment -> type "Web app".
- *      - Execute as: Me
- *      - Who has access: Anyone
- *    Copy the Web app URL -> set it as SHEETS_WEBHOOK_URL on Render.
- * 6. Run `doPost` once from the editor to grant permissions (it will error
- *    on missing event data — that is fine, the permission prompt is the point).
+ * 1. Open the Sheet -> Extensions -> Apps Script, paste this file.
+ * 2. Set SECRET to match SHEETS_WEBHOOK_TOKEN on the Render service.
+ * 3. Deploy -> New deployment -> Web app (Execute as Me, Anyone).
+ *    To ship later edits, use Deploy -> Manage deployments -> edit the existing
+ *    deployment -> Version: New version, so the /exec URL stays the same.
  */
 
-var SECRET = '';            // must match SHEETS_WEBHOOK_TOKEN on the server (or leave '')
+var SECRET = 'REDACTED';
 var SHEET_NAME = 'Applications';
-
+var NOTIFY_EMAIL = 'contact@prohiringsolutions.com';
 var HEADERS = ['Submitted At', 'Name', 'Age', 'Email', 'Phone', 'Field', 'Message', 'Source'];
 
 function doPost(e) {
   try {
     var body = JSON.parse(e.postData.contents);
-
     if (SECRET && body.token !== SECRET) {
-      return json_({ ok: false, error: 'unauthorized' }, 401);
+      return json_({ ok: false, error: 'unauthorized' });
     }
 
     var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -50,18 +50,51 @@ function doPost(e) {
       body.source || '',
     ]);
 
-    return json_({ ok: true }, 200);
+    notify_(body);
+
+    return json_({ ok: true });
   } catch (err) {
-    return json_({ ok: false, error: String(err) }, 400);
+    return json_({ ok: false, error: String(err) });
+  }
+}
+
+/** Emails the new lead. Wrapped so a mail failure never loses the sheet row. */
+function notify_(b) {
+  try {
+    var name = b.name || 'New candidate';
+    var subject = 'New application: ' + name + (b.role ? ' - ' + b.role : '');
+    var body = [
+      'A new application was submitted on the Pro Hiring Solutions website.',
+      '',
+      'Name:    ' + (b.name || '-'),
+      'Age:     ' + (b.age || '-'),
+      'Email:   ' + (b.email || '-'),
+      'Phone:   ' + (b.phone || '-'),
+      'Field:   ' + (b.role || '-'),
+      '',
+      'Message:',
+      b.message || '(none)',
+      '',
+      'Submitted: ' + (b.submittedAt || new Date().toISOString()),
+      'Source:    ' + (b.source || '-'),
+    ].join('\n');
+
+    var options = { to: NOTIFY_EMAIL, subject: subject, body: body, name: 'Pro Hiring Solutions' };
+    if (b.email) {
+      options.replyTo = b.email;
+    }
+    MailApp.sendEmail(options);
+  } catch (err) {
+    console.error('Lead email failed: ' + err);
   }
 }
 
 function doGet() {
-  return json_({ ok: true, service: 'pro-hiring-sheets' }, 200);
+  return json_({ ok: true, service: 'pro-hiring-sheets' });
 }
 
 function json_(obj) {
-  return ContentService
-    .createTextOutput(JSON.stringify(obj))
-    .setMimeType(ContentService.MimeType.JSON);
+  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(
+    ContentService.MimeType.JSON
+  );
 }

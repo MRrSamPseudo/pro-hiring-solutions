@@ -7,7 +7,7 @@ export const site = {
   phone: '+13159203097',
   phoneDisplay: '+1 (315) 920-3097',
   whatsapp: 'https://wa.me/13159203097',
-  email: 'careers@prohiringsolutions.com',
+  email: 'contact@prohiringsolutions.com',
 };
 
 export const stats = [
