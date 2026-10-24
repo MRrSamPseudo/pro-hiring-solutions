@@ -31,7 +31,7 @@ export function ApplyForm() {
   function warmUp() {
     if (warmed.current || !API_BASE) return;
     warmed.current = true;
-    fetch(`${API_BASE}/health`, { mode: 'cors' }).catch(() => {});
+    fetch(`${API_BASE}/health`, { mode: 'no-cors' }).catch(() => {});
   }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -50,7 +50,7 @@ export function ApplyForm() {
     }
 
     try {
-      const res = await fetch(`${API_BASE}/api/apply`, {
+      const res = await fetch('/api/apply', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

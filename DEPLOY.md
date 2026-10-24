@@ -1,5 +1,24 @@
 # Deployment guide — Pro Hiring Solutions
 
+## Production (current)
+
+| Piece | Where |
+|-------|-------|
+| Site | https://prohiringsolutions.site (Vercel project `pro-hiring-solutions`, team ACME, Hobby, root dir `web/`). `www.` redirects 308 to the apex. |
+| Form relay | `web/app/api/apply/route.ts` on Vercel. The browser posts same-origin; the route forwards to the API, so the API's `ALLOWED_ORIGINS` does not need every site domain. |
+| API | Render free web service `pro-hiring-solutions` (`server/`), https://pro-hiring-solutions.onrender.com. It sleeps when idle. The form wakes it once when a visitor starts typing. **Never add a keep-alive pinger** (that burned the shared Render free hours before). |
+| Data + lead email | Google Sheet "Pro Hiring Solutions — Applications" + bound Apps Script (muhammadsameedabid@gmail.com). Each submission adds a row and emails `contact@prohiringsolutions.site` via MailApp. The script's `SECRET` lives only in the Apps Script editor. |
+| Domain + DNS | `prohiringsolutions.site` at Namecheap (BasicDNS): `A @ 216.198.79.1`, `CNAME www <project>.vercel-dns-017.com`. |
+| Email | Namecheap Private Email on `prohiringsolutions.site`. MX `mx1/mx2.privateemail.com`, SPF `include:spf.privateemail.com`, DKIM `privateemail._domainkey`, DMARC `p=none` with reports to the mailbox. Webmail: https://privateemail.com |
+
+`git push` to `main` deploys to Vercel automatically (only when `web/` changes).
+`NEXT_PUBLIC_API_BASE_URL` is baked in at build time; redeploy without build cache after changing it.
+
+`prohiringsolutions.com` is registered at Hostinger and is still attached to the Vercel
+project. To use it, point its DNS to Vercel (see Vercel → Domains for the records).
+
+---
+
 Order: **GitHub → Google Sheet + Apps Script → Render (API) → Vercel (web) → Cloudinary (optional)**.
 
 ---
