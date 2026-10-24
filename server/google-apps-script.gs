@@ -16,9 +16,10 @@
  *    deployment -> Version: New version, so the /exec URL stays the same.
  */
 
-var SECRET = 'REDACTED';
+// The live value is set only in the Apps Script editor. Never commit it.
+var SECRET = '';
 var SHEET_NAME = 'Applications';
-var NOTIFY_EMAIL = 'contact@prohiringsolutions.com';
+var NOTIFY_EMAIL = 'contact@prohiringsolutions.site';
 var HEADERS = ['Submitted At', 'Name', 'Age', 'Email', 'Phone', 'Field', 'Message', 'Source'];
 
 function doPost(e) {

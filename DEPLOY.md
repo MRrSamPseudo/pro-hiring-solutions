@@ -88,7 +88,8 @@ Use for any raster images (real logo, team photos, OG image).
 
 1. Upload the asset in the Cloudinary dashboard; copy its **secure URL**
    (`https://res.cloudinary.com/<cloud>/image/upload/...`).
-2. `next.config.mjs` already allows `res.cloudinary.com`, so use `next/image`:
+2. Add `images: { remotePatterns: [{ protocol: 'https', hostname: 'res.cloudinary.com' }] }`
+   to `next.config.mjs` (removed while unused, to keep the image optimizer off), then use `next/image`:
 
 ```tsx
 import Image from 'next/image';
