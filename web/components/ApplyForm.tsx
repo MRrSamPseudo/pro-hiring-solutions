@@ -1,10 +1,8 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { Icon } from './Icons';
 import { site } from '@/lib/site';
-
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? '';
 
 type Status = 'idle' | 'loading' | 'success' | 'error';
 
@@ -24,15 +22,6 @@ export function ApplyForm() {
   const [status, setStatus] = useState<Status>('idle');
   const [error, setError] = useState('');
   const [channel, setChannel] = useState<'whatsapp' | 'mail'>('whatsapp');
-  const warmed = useRef(false);
-
-  // The free API host sleeps when idle. Wake it once, when the visitor starts
-  // filling the form, so the submit does not wait for a cold start.
-  function warmUp() {
-    if (warmed.current || !API_BASE) return;
-    warmed.current = true;
-    fetch(`${API_BASE}/health`, { mode: 'no-cors' }).catch(() => {});
-  }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -102,7 +91,7 @@ export function ApplyForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} onFocusCapture={warmUp} className="card p-6 sm:p-8" noValidate>
+    <form onSubmit={onSubmit} className="card p-6 sm:p-8" noValidate>
       <div className="flex items-start gap-4">
         <span className="tile shrink-0">
           <Icon.users className="h-5 w-5" />

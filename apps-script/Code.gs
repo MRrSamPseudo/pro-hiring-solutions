@@ -2,22 +2,21 @@
  * Pro Hiring Solutions — Google Sheets intake + email notification.
  *
  * Bound to the "Pro Hiring Solutions — Applications" spreadsheet and deployed
- * as a Web App ("Execute as: Me", "Who has access: Anyone"). The Render API is
- * the only caller and it holds the /exec URL plus the shared secret.
+ * as a Web App ("Execute as: Me", "Who has access: Anyone"). The only caller is
+ * the website's /api/apply route on Vercel, which validates every submission.
+ *
+ * The /exec URL is the credential: it is stored only in Vercel as
+ * SHEETS_WEBHOOK_URL (type Sensitive). Never commit it or expose it to a browser.
+ * To rotate it: Deploy -> New deployment, put the new URL in Vercel, redeploy
+ * the site, then archive the old deployment so its URL stops working.
  *
  * Each submission appends a row to the Applications tab and emails the lead to
  * NOTIFY_EMAIL. Sending uses MailApp, so no SMTP credentials are stored anywhere.
  *
- * SETUP
- * 1. Open the Sheet -> Extensions -> Apps Script, paste this file.
- * 2. Set SECRET to match SHEETS_WEBHOOK_TOKEN on the Render service.
- * 3. Deploy -> New deployment -> Web app (Execute as Me, Anyone).
- *    To ship later edits, use Deploy -> Manage deployments -> edit the existing
- *    deployment -> Version: New version, so the /exec URL stays the same.
+ * To ship code edits without changing the URL: Deploy -> Manage deployments ->
+ * edit the active deployment -> Version: New version.
  */
 
-// The live value is set only in the Apps Script editor. Never commit it.
-var SECRET = '';
 var SHEET_NAME = 'Applications';
 var NOTIFY_EMAIL = 'contact@prohiringsolutions.site';
 var HEADERS = ['Submitted At', 'Name', 'Age', 'Email', 'Phone', 'Field', 'Message', 'Source'];
@@ -25,9 +24,6 @@ var HEADERS = ['Submitted At', 'Name', 'Age', 'Email', 'Phone', 'Field', 'Messag
 function doPost(e) {
   try {
     var body = JSON.parse(e.postData.contents);
-    if (SECRET && body.token !== SECRET) {
-      return json_({ ok: false, error: 'unauthorized' });
-    }
 
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sheet = ss.getSheetByName(SHEET_NAME);
